@@ -5,6 +5,11 @@ local Window = OrionLib:MakeWindow({Name = "Auto Collect Hub", HidePremium = fal
 _G.autoMoney = false
 _G.autoCrate = false
 
+-- Debug function for logging
+local function debugLog(message)
+    rconsoleprint(message .. "\n") -- Sends logs to console (requires Synapse or KRNL)
+end
+
 -- Main Tab
 local MainTab = Window:MakeTab({
     Name = "Main",
@@ -20,16 +25,15 @@ MainTab:AddToggle({
         _G.autoMoney = Value
         while _G.autoMoney do
             pcall(function()
-                local args = {
-                    [1] = "CollectMoney", -- Example argument (update this if necessary)
-                    [2] = game:GetService("Players").LocalPlayer
-                }
-                local remote = game:GetService("ReplicatedStorage"):FindFirstChild("MoneyCollectorEvent") -- Replace with the correct RemoteEvent name
+                local remote = game:GetService("ReplicatedStorage"):FindFirstChild("MoneyCollectorEvent") -- Replace with actual event
                 if remote then
-                    remote:FireServer(unpack(args))
+                    debugLog("Firing MoneyCollectorEvent...")
+                    remote:FireServer()
+                else
+                    debugLog("MoneyCollectorEvent not found!")
                 end
             end)
-            wait(0.1) -- Adjust delay as needed
+            wait(0.1)
         end
     end
 })
@@ -42,15 +46,15 @@ MainTab:AddToggle({
         _G.autoCrate = Value
         while _G.autoCrate do
             pcall(function()
-                local args = {
-                    [1] = "CollectCrate", -- Example argument (update this if necessary)
-                }
-                local remote = game:GetService("ReplicatedStorage"):FindFirstChild("CrateCollectorEvent") -- Replace with the correct RemoteEvent name
+                local remote = game:GetService("ReplicatedStorage"):FindFirstChild("CrateCollectorEvent") -- Replace with actual event
                 if remote then
-                    remote:FireServer(unpack(args))
+                    debugLog("Firing CrateCollectorEvent...")
+                    remote:FireServer()
+                else
+                    debugLog("CrateCollectorEvent not found!")
                 end
             end)
-            wait(0.1) -- Adjust delay as needed
+            wait(0.1)
         end
     end
 })
