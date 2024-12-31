@@ -19,13 +19,16 @@ MainTab:AddToggle({
     Callback = function(Value)
         _G.autoMoney = Value
         while _G.autoMoney do
-            local args = {
-                [1] = 11,
-                [2] = "collectMoney",
-                [3] = game:GetService("Players").LocalPlayer
-            }
-            
-            game:GetService("ReplicatedStorage").ReplicaRemoteEvents.Replica_ReplicaSignal:FireServer(unpack(args))
+            pcall(function()
+                local args = {
+                    [1] = "CollectMoney", -- Example argument (update this if necessary)
+                    [2] = game:GetService("Players").LocalPlayer
+                }
+                local remote = game:GetService("ReplicatedStorage"):FindFirstChild("MoneyCollectorEvent") -- Replace with the correct RemoteEvent name
+                if remote then
+                    remote:FireServer(unpack(args))
+                end
+            end)
             wait(0.1) -- Adjust delay as needed
         end
     end
@@ -38,11 +41,15 @@ MainTab:AddToggle({
     Callback = function(Value)
         _G.autoCrate = Value
         while _G.autoCrate do
-            local args = {
-                [1] = "9d0e9184-22de-4e1a-8117-e6c15a13fdb2"
-            }
-            
-            game:GetService("ReplicatedStorage").SharedPackages._Index:FindFirstChild("sleitnick_net@0.1.0").net:FindFirstChild("RE/claimCrate"):FireServer(unpack(args))
+            pcall(function()
+                local args = {
+                    [1] = "CollectCrate", -- Example argument (update this if necessary)
+                }
+                local remote = game:GetService("ReplicatedStorage"):FindFirstChild("CrateCollectorEvent") -- Replace with the correct RemoteEvent name
+                if remote then
+                    remote:FireServer(unpack(args))
+                end
+            end)
             wait(0.1) -- Adjust delay as needed
         end
     end
