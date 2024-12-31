@@ -1,80 +1,67 @@
 local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shlexware/Orion/main/source')))()
-local Window = OrionLib:MakeWindow({Name = "Sebi's Hub | Super Hero Tycoon | V1", HidePremium = false, SaveConfig = true, ConfigFolder = "OrionTest"})
-local PowersTab = Window:MakeTab({
-	Name = "Super Powers",
-	Icon = "rbxassetid://4483345998",
-	PremiumOnly = false
+local Window = OrionLib:MakeWindow({Name = "Auto Collect Hub", HidePremium = false, SaveConfig = true})
+
+-- Variables
+_G.autoMoney = false
+_G.autoCrate = false
+
+-- Main Tab
+local MainTab = Window:MakeTab({
+    Name = "Main",
+    Icon = "rbxassetid://4483345998",
+    PremiumOnly = false
 })
-local Section = PowersTab:AddSection({
-	Name = "Super Powers"
+
+-- Auto Collect Money
+MainTab:AddToggle({
+    Name = "Auto Collect Money",
+    Default = false,
+    Callback = function(Value)
+        _G.autoMoney = Value
+        while _G.autoMoney do
+            local args = {
+                [1] = 11,
+                [2] = "collectMoney",
+                [3] = game:GetService("Players").LocalPlayer
+            }
+            
+            game:GetService("ReplicatedStorage").ReplicaRemoteEvents.Replica_ReplicaSignal:FireServer(unpack(args))
+            wait(0.1) -- Adjust delay as needed
+        end
+    end
 })
-PowersTab:AddButton({
-	Name = "Collect Hulk Powers (down)",
-	Callback = function()
-      	game.Players.LocalPlayer.Character:SetPrimaryPartCFrame(CFrame.new(1538, 61, 1152))
-      	wait()
-      	game.Players.LocalPlayer.Character:SetPrimaryPartCFrame(CFrame.new(1535, 61, 1163))
-      	wait()
-      	game.Players.LocalPlayer.Character:SetPrimaryPartCFrame(CFrame.new(1338, 62, 1114))
-  	end    
+
+-- Auto Collect Crates
+MainTab:AddToggle({
+    Name = "Auto Collect Crates",
+    Default = false,
+    Callback = function(Value)
+        _G.autoCrate = Value
+        while _G.autoCrate do
+            local args = {
+                [1] = "9d0e9184-22de-4e1a-8117-e6c15a13fdb2"
+            }
+            
+            game:GetService("ReplicatedStorage").SharedPackages._Index:FindFirstChild("sleitnick_net@0.1.0").net:FindFirstChild("RE/claimCrate"):FireServer(unpack(args))
+            wait(0.1) -- Adjust delay as needed
+        end
+    end
 })
-PowersTab:AddButton({
-	Name = "Collect Green Lantern Powers (down)",
-	Callback = function()
-      	game.Players.LocalPlayer.Character:SetPrimaryPartCFrame(CFrame.new(1208, 62, 1270))
-      	wait()
-      	game.Players.LocalPlayer.Character:SetPrimaryPartCFrame(CFrame.new(1199, 61, 1263))
-      	wait()
-      	game.Players.LocalPlayer.Character:SetPrimaryPartCFrame(CFrame.new(1338, 62, 1114))
-  	end    
+
+-- Info Label
+MainTab:AddLabel("Press RightShift to Toggle GUI")
+
+-- Notification on Load
+OrionLib:MakeNotification({
+    Name = "Script Loaded",
+    Content = "Auto Collect Hub is ready!",
+    Image = "rbxassetid://4483345998",
+    Time = 5
 })
-PowersTab:AddButton({
-	Name = "Collect The Flash Powers (down)",
-	Callback = function()
-      	game.Players.LocalPlayer.Character:SetPrimaryPartCFrame(CFrame.new(1336, 62, 1308))
-      	wait()
-      	game.Players.LocalPlayer.Character:SetPrimaryPartCFrame(CFrame.new(1325, 62, 1308))
-      	wait()
-      	game.Players.LocalPlayer.Character:SetPrimaryPartCFrame(CFrame.new(1338, 62, 1114))
-  	end    
-})
-PowersTab:AddButton({
-	Name = "Collect Batman Powers (down)",
-	Callback = function()
-      	game.Players.LocalPlayer.Character:SetPrimaryPartCFrame(CFrame.new(1326, 63, 875))
-      	wait()
-      	game.Players.LocalPlayer.Character:SetPrimaryPartCFrame(CFrame.new(1338, 63, 876))
-      	wait()
-      	game.Players.LocalPlayer.Character:SetPrimaryPartCFrame(CFrame.new(1338, 62, 1114))
-  	end    
-})
-PowersTab:AddButton({
-	Name = "Collect Thor Powers (down)",
-	Callback = function()
-      	game.Players.LocalPlayer.Character:SetPrimaryPartCFrame(CFrame.new(1461, 63, 1265))
-      	wait()
-      	game.Players.LocalPlayer.Character:SetPrimaryPartCFrame(CFrame.new(1454, 64, 876))
-      	wait()
-      	game.Players.LocalPlayer.Character:SetPrimaryPartCFrame(CFrame.new(1338, 62, 1269))
-  	end    
-})
-PowersTab:AddButton({
-	Name = "Collect Black Panther Powers (down)",
-	Callback = function()
-      	game.Players.LocalPlayer.Character:SetPrimaryPartCFrame(CFrame.new(1535, 62, 1021))
-      	wait()
-      	game.Players.LocalPlayer.Character:SetPrimaryPartCFrame(CFrame.new(1538, 62, 1029))
-      	wait()
-      	game.Players.LocalPlayer.Character:SetPrimaryPartCFrame(CFrame.new(1338, 62, 1269))
-  	end    
-})
-PowersTab:AddButton({
-	Name = "Collect Iron Man Powers (down)",
-	Callback = function()
-      	game.Players.LocalPlayer.Character:SetPrimaryPartCFrame(CFrame.new(1454, 62, 913))
-      	wait()
-      	game.Players.LocalPlayer.Character:SetPrimaryPartCFrame(CFrame.new(1461, 63, 919))
-      	wait()
-      	game.Players.LocalPlayer.Character:SetPrimaryPartCFrame(CFrame.new(1338, 62, 1269))
-  	end    
-})
+
+-- Anti AFK
+local VirtualUser = game:GetService('VirtualUser')
+game:GetService('Players').LocalPlayer.Idled:connect(function()
+    VirtualUser:CaptureController()
+    VirtualUser:ClickButton2(Vector2.new())
+end)
