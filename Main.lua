@@ -19,6 +19,7 @@ MainTab:AddToggle({
     Callback = function(Value)
         _G.autoCollectMoney = Value
         if Value then
+            -- Start auto collection
             spawn(function()
                 while _G.autoCollectMoney do
                     for i = 1, 10 do
@@ -45,6 +46,7 @@ MainTab:AddToggle({
     Callback = function(Value)
         _G.autoCollectCrate = Value
         if Value then
+            -- Start crate collection
             spawn(function()
                 while _G.autoCollectCrate do
                     local args = {
