@@ -2,13 +2,7 @@ local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shl
 local Window = OrionLib:MakeWindow({Name = "Auto Collect Hub", HidePremium = false, SaveConfig = true})
 
 -- Variables
-_G.autoMoney = false
-_G.autoCrate = false
-
--- Debug function for logging
-local function debugLog(message)
-    rconsoleprint(message .. "\n") -- Sends logs to console (requires Synapse or KRNL)
-end
+_G.autoCollectMoney = false
 
 -- Main Tab
 local MainTab = Window:MakeTab({
@@ -17,44 +11,29 @@ local MainTab = Window:MakeTab({
     PremiumOnly = false
 })
 
--- Auto Collect Money
+-- Auto Collect Money Toggle
 MainTab:AddToggle({
     Name = "Auto Collect Money",
     Default = false,
     Callback = function(Value)
-        _G.autoMoney = Value
-        while _G.autoMoney do
-            pcall(function()
-                local remote = game:GetService("ReplicatedStorage"):FindFirstChild("MoneyCollectorEvent") -- Replace with actual event
-                if remote then
-                    debugLog("Firing MoneyCollectorEvent...")
-                    remote:FireServer()
-                else
-                    debugLog("MoneyCollectorEvent not found!")
-                end
-            end)
-            wait(0.1)
-        end
-    end
-})
+        _G.autoCollectMoney = Value
+        if Value then
+            -- Start auto collection
+            spawn(function()
+                while _G.autoCollectMoney do
+                    for i = 1, 10 do
+                        local args = {
+                            [1] = i, -- Money ID
+                            [2] = "collectMoney", -- Action
+                            [3] = game:GetService("Players").LocalPlayer -- Player reference
+                        }
 
--- Auto Collect Crates
-MainTab:AddToggle({
-    Name = "Auto Collect Crates",
-    Default = false,
-    Callback = function(Value)
-        _G.autoCrate = Value
-        while _G.autoCrate do
-            pcall(function()
-                local remote = game:GetService("ReplicatedStorage"):FindFirstChild("CrateCollectorEvent") -- Replace with actual event
-                if remote then
-                    debugLog("Firing CrateCollectorEvent...")
-                    remote:FireServer()
-                else
-                    debugLog("CrateCollectorEvent not found!")
+                        local remoteEvent = game:GetService("ReplicatedStorage"):WaitForChild("ReplicaRemoteEvents"):WaitForChild("Replica_ReplicaSignal")
+                        remoteEvent:FireServer(unpack(args))
+                        wait(0.1) -- Adjust delay as needed
+                    end
                 end
             end)
-            wait(0.1)
         end
     end
 })
